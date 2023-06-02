@@ -1,0 +1,259 @@
+<{extends file="../layout.html" }>
+<{block name="addScript"}>
+<!-- daterangepicker 라이브러리 불러오기 -->
+    <!-- Datepicker -->
+    <link rel="stylesheet" href="<{ADMIN_CSS_PATH}>/daterangepicker.css">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <!-- Datepicker -->
+    <script src="<{ADMIN_JS_PATH}>/daterangepicker.js"></script>
+    <script src="<{ADMIN_JS_PATH}>/datepicker.js"></script>
+    <style type="text/css">
+		.table.table-custom tbody tr:last-child td {
+			border-bottom: 1px solid rgba(0,0,0,.125);
+		}
+
+	</style>
+<{/block}>
+<{block name="content"}>
+    <!-- content -->
+    <div class="content ">
+        
+        <div class="mb-4">
+            <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="#">
+                            <i class="bi bi-globe2 small me-2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">Customers</li>
+                </ol>
+            </nav>
+        </div>
+   
+        <div class="card">
+            <div class="card-body">
+                <div class="d-md-flex">
+                    <div class="d-md-flex gap-4 align-items-center">
+                        <div class="mb-3 mb-md-0">
+                            <div class="row g-3">
+                                <div class="col-md-2">
+                                    <select class="form-select" id="buyType">
+                                        <option value="">구매방법</option>
+                                        <option value="到店取">매장방문</option>
+                                        <option value="邮寄手机">우편발송</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <select class="form-select" id="isDeposit">
+                                        <option value="">결제상태</option>
+                                        <option value="0">미결제</option>
+                                        <option value="1">결제완료</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="productNumber" placeholder="주문번호">
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="phoneNumber"  placeholder="전화번호">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="input-group">
+                                        <input type="text" name="daterange" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dropdown ms-auto">
+                        <button type="button" class="btn btn-dark" onclick="search();">검색</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <div class="table-responsive" style="margin-top:30px;">
+            <div class="row">
+                <div class="col-md-12">
+                    <{foreach $buyerData as $buyer}>
+                    <div class="card mb-4">
+                        <div class="card-body" style="background-color: #fff; border-radius: 1rem;">
+                            <div class="d-flex gap-4 align-items-center" data-bs-toggle="collapse" aria-expanded="false" data-bs-target="#<{$buyer.productNumber}>" role="button">
+                                <div><strong>상품번호</strong>: <span class="text-danger"><{$buyer.productNumber}></span></div>
+                                <div><strong>이름</strong>: <{$buyer.buyUser}></div>
+                                <div class="ms-auto"><strong>전화번호</strong>: <{$buyer.phoneNumber}></div>
+                                <div class="ms-auto"><strong>구매일</strong>: <{$buyer.buyDate}></div>
+                                <div class="bi bi-chevron-down ms-auto"></div>
+                            </div>
+                            <div class="collapse mt-4" id="<{$buyer.productNumber}>">
+                                <hr class="mb-0">
+                                <div class="table-responsive">
+                                    <table class="table table-custom mb-0">
+                                        <thead>
+                                        <tr>
+                                            <th>상품번호</th>
+                                            <th>유저아이디</th>
+                                            <th>구매타이틀</th>
+                                            <th>구매모델</th>                                
+                                            <th>구매방법</th>
+                                            <th>WeChat</th>                                                                                     
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td>                                           
+                                                <a href="#"><{$buyer.productNumber}></a>
+                                            </td>
+                                            <td><{$buyer.userId}></td>
+                                            <td><a href="/index.php/admin/Buyer/phoneDetail/phone_num/<{$buyer.phone_num}>.html"><{$buyer.phone_title}></a></td>
+                                            <td><{$buyer.phoneModel}></td>
+                                            <td><span class="badge bg-danger" style="font-size: 13px;"><{$buyer.buyType}></span></td>
+                                            <td><{$buyer.weixin}></td>
+                                        </tr>                    
+                                        </tbody>
+                                        <thead>
+                                        <tr>
+                                            <th>주소</th>
+                                            <th>휴대폰가격</th>
+                                            <th>구매대행가격</th>
+                                            <th>총금액</th>
+                                            <th>결제상태</th>
+                                            <th class="text-end">수정</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td>
+                                                <{$buyer.adress}>
+                                            </td>
+                                            <td><span class="text-success"><{$buyer.prices}></span></td>
+                                            <td><span class="text-success"><{$buyer.purchasing}></span></td>
+                                            <td><span class="text-danger"><{$buyer.totalPrice}></span></td>
+                                            <td class="td_isDeposit">
+                                                <span class="badge bg-success span_isDeposit" style="font-size: 13px;"><{$buyer.isDeposit}></span>
+                                            </td>
+                                            <td class="text-end">
+                                                <div class="d-flex">
+                                                    <div class="dropdown ms-auto">
+                                                        <a href="#" data-bs-toggle="dropdown" class="btn btn-floating" aria-haspopup="true" aria-expanded="false">
+                                                            <i class="bi bi-three-dots"></i>
+                                                        </a>
+                                                        <div class="dropdown-menu dropdown-menu-end">
+                                                            <input type="hidden" class="buyNum" value="<{$buyer.buyNum}>">
+                                                            <span  class="dropdown-item" onclick="deleteBuyer(this);">삭제</span>
+                                                            <span  class="dropdown-item" onclick="updateIsDeposit('결제완료',this);">결제완료</span>
+                                                            <span  class="dropdown-item" onclick="updateIsDeposit('미결제',this);">미결제</span>
+                                                            <span  class="dropdown-item" onclick="printerBuyer(this);">프린터</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>                    
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div>입금승인시간: <a href="#"><{$buyer.depositDate}></a></div>
+                            </div>
+                        </div>
+                    </div>
+                    <{/foreach}>
+                </div>
+            </div>
+        </div>
+    
+        <nav class="mt-4" aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+                <{$strPage}>
+            </ul>
+        </nav>
+    
+        </div>
+        <!-- ./ content -->
+        <script type="text/javascript">
+            // daterangepicker 인스턴스 생성
+            let startDate = "";
+            let endDate = "";
+            $('input[name="daterange"]').daterangepicker({
+              locale: {
+                format: 'YYYY년 M월 D일',
+                separator: ' - ',
+                applyLabel: '적용',
+                cancelLabel: '취소',
+                fromLabel: '시작일',
+                toLabel: '종료일',
+                customRangeLabel: '사용자 설정',
+                weekLabel: '주',
+                daysOfWeek: ['일', '월', '화', '수', '목', '금', '토'],
+                monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+                firstDay: 0
+              }
+            });
+            $('input[name="daterange"]').on('apply.daterangepicker', function(ev, picker) {
+                 startDate = picker.startDate.format('YYYY-MM-DD');
+                 endDate = picker.endDate.format('YYYY-MM-DD');
+            });
+            
+            //검색
+            let search = function(){
+                let buyType = document.getElementById('buyType').value;
+                let isDeposit = document.getElementById('isDeposit').value;
+                let productNumber = document.getElementById('productNumber').value;
+                let phoneNumber = document.getElementById('phoneNumber').value;
+                window.location.href = "/index.php/admin/Buyer/buyList.html?buyType="+buyType+"&isDeposit="+isDeposit+"&productNumber="+productNumber+"&phoneNumber="+phoneNumber+"&startDate="+startDate+"&endDate="+endDate;
+            }
+
+            //입금상태 수정
+            let requestRunning = false;
+            let updateIsDeposit = function(IsDeposit,clButton){
+                if(confirm("구매상품에 대하여 "+IsDeposit+" 처리할까요?")){
+                    if(requestRunning){
+                        alert("상태 수정중입니다.잠시후 시도해주세요");
+                        return;
+                    }
+                    requestRunning = true;
+                    let buyNum = clButton.parentNode.querySelector('.buyNum').value;
+                    $.ajax({
+                        url:"/index.php/admin/Buyer/updateIsDeposit.html",
+                        method : 'POST',
+                        data : {
+                            IsDeposit,
+                            buyNum
+                        },
+                        success : function(response){
+                            if(response == 1){
+                                let trNode = clButton.parentNode.parentNode.parentNode.parentNode.parentNode;
+                                trNode.querySelector('.td_isDeposit').querySelector('.span_isDeposit').innerHTML = IsDeposit;
+                                alert("입금상태가_("+IsDeposit+')_수정완료하였습니다');
+                            }else{
+                                alert('똑같은 상태로 수정이 불가능합니다');
+                            }
+                        },
+                        error : function(jqXHR, textStatus, errorThrown){
+                            console.log(textStatus, errorThrown);
+                            alert('에러발생');
+                        },
+                        complete : function(){
+                            requestRunning = false;
+                        }
+                    });              
+                }
+            }
+
+            //구매내역 삭제
+            let deleteBuyer = function(clButton){
+                if(confirm('구매상품을 삭제하겠습니까?')){
+                    let buyNum = clButton.parentNode.querySelector('.buyNum').value;
+                    window.location.href="/index.php/admin/Buyer/buyerDelete/buyNum/"+buyNum+".html";
+                }
+            }
+            //프린터 하기
+            let printerBuyer = function(clButton){
+                let buyNum = clButton.parentNode.querySelector('.buyNum').value;
+                window.location.href="/index.php/admin/Buyer/printBuyer/buyNum/"+buyNum+".html";
+            }
+        </script>
+<{/block}>
